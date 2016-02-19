@@ -1,30 +1,35 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-//i am ankit
-int main(int argc, char *argv[], char *envp[])
+#include  <stdio.h>
+#include  <sys/types.h>
+
+void  split(char *commandline, char **splitter)
 {
-	char c = '\0';
-        char c1[20];
-        char command[20];
-        char complete_command[50];
-	int len=0,i=0;
-        strcpy(c1,"/bin/");
-	printf("\nminish >");
-	while(c != EOF) {
-	       	
-                
-                scanf("%s",command);
-                strcpy(complete_command,strcat(c1,command));              
-               // strcpy(complete_command,command);
-	       // printf("%s",complete_command);
-		execve(complete_command, argv, envp);
-		c=getchar();
-		if(c == '\n')
-	        printf("\nminish >");
-	}
-	printf("\n");
-	return 0;
+     while (*commandline != '\0') {       
+          while (*commandline == ' ' || *commandline == '\t' || *commandline == '\n')
+               *commandline++ = '\0';     
+          *splitter++ = commandline;          
+          while (*commandline != '\0' && *commandline != ' ') 
+               commandline++;             
+     }
+     *splitter = '\0';                 
 }
 
+void  execute(char **splitter)
+{
+     execvp(*splitter, splitter);
+}
+
+void  main(void)
+{
+     char  commandline[500];             
+     char  *splitter[50];              
+
+     while (1) {                   
+          printf("Shell -> ");     
+          gets(commandline);              
+          printf("\n");
+          split(commandline, splitter);       
+          if (strcmp(splitter[0], "exit") == 0)  
+               exit(0);                            
+          execute(splitter);           
+     }
+}
