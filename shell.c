@@ -53,37 +53,56 @@ int main(int argc, char **argv)
           if (strcmp(splitter[0], "exit") == 0)  
                exit(0); 
             
-               
+                  
                   
                   pid = fork();
-                            if (pid == -1)
+                  if (pid == -1)
                   {
                       // error, failed to fork()
                   } 
                   
                    if (pid == 0)
-                  {
-                     
+                  { 
+
+                      if (splitter[1]!=NULL && !strcmp(splitter[1], "&"))
+                      {
+                        execvp(splitter[0],splitter);
+                      }
+
+
+
                       if (strcmp(splitter[0], "ls") == 0)  
                       {
-                        int file=open(splitter[2],O_WRONLY);
-                        dup2(file,1);
-                        execvp("ls", argv);
+                        //int file=open(splitter[2],O_WRONLY);
+                        //dup2(file,1);
+                        execvp("ls", splitter);
                       }
+                       
                       if(!strcmp(splitter[0],"clear") || !strcmp(splitter[0],"cc") || !strcmp(splitter[0],"mkdir") || !strcmp(splitter[0],"rmdir") || !strcmp(splitter[0],"rm"))
                       {
                         execvp(splitter[0],splitter);
                       }
-                      _exit(EXIT_FAILURE);   
+                      
+                      else
+                      {
+                        execvp(splitter[0],splitter);
+                        
+                      }
+                    _exit(EXIT_FAILURE); 
 
                   
                 }
                   else 
                   {
                       int status;
-                     
-                      waitpid(pid, &status, 0);
+                     if (splitter[1]!=NULL && !strcmp(splitter[1], "&"))  
+                      {
                       
+                      }
+                      else
+                      {
+                        waitpid(pid, &status, 0);
+                      }  
                          
                   } 
 
